@@ -1,6 +1,7 @@
 package model;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 public class PostBean implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -10,6 +11,7 @@ public class PostBean implements Serializable {
     private String immagine;
     private int segnalazioni;
     private int likes;
+    private Date dataCreazione;
     private String utenteEmail;
     private int communityId;
 
@@ -20,6 +22,7 @@ public class PostBean implements Serializable {
         this.immagine = "";
         this.segnalazioni = 0;
         this.likes = 0;
+        this.dataCreazione = new Date(-1);
         this.utenteEmail = "";
         this.communityId = -1;
     }
@@ -83,6 +86,14 @@ public class PostBean implements Serializable {
 	public void rimuoviLike() {
 		this.likes--;
 	}
+	
+	public Date getDataCreazione() {
+        return dataCreazione;
+    }
+
+    public void setDataCreazione(Date dataCreazione) {
+        this.dataCreazione = dataCreazione;
+    }
 
 	public String getUtenteEmail() {
         return utenteEmail;

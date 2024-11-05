@@ -14,7 +14,7 @@ public class PostDAO extends AbstractDAO<PostBean> {
         Connection con = null;
         PreparedStatement statement = null;
 
-        String query = "INSERT INTO " + TABLE_NAME + " (titolo, corpo, immagine, segnalazioni, likes, utenteEmail, communityId) VALUES (?,?,?,?,?,?,?)";
+        String query = "INSERT INTO " + TABLE_NAME + " (titolo, corpo, immagine, segnalazioni, likes, dataCreazione, utenteEmail, communityId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             con = DriverManagerConnectionPool.getConnection();
@@ -24,9 +24,10 @@ public class PostDAO extends AbstractDAO<PostBean> {
             statement.setString(2, bean.getCorpo());
             statement.setString(3, bean.getImmagine());
             statement.setInt(4, bean.getSegnalazioni());
-            statement.setInt(5, bean.getLikes()); // Set likes after segnalazioni
-            statement.setString(6, bean.getUtenteEmail());
-            statement.setInt(7, bean.getCommunityId());
+            statement.setInt(5, bean.getLikes());
+            statement.setDate(6, bean.getDataCreazione()); // Assume that dataCreazione is set in the bean
+            statement.setString(7, bean.getUtenteEmail());
+            statement.setInt(8, bean.getCommunityId());
 
             statement.executeUpdate();
             con.commit();
@@ -57,6 +58,7 @@ public class PostDAO extends AbstractDAO<PostBean> {
                 post.setImmagine(result.getString("immagine"));
                 post.setSegnalazioni(result.getInt("segnalazioni"));
                 post.setLikes(result.getInt("likes")); // Retrieve likes after segnalazioni
+                post.setDataCreazione(result.getDate("dataCreazione"));
                 post.setUtenteEmail(result.getString("utenteEmail"));
                 post.setCommunityId(result.getInt("communityId"));
             }
@@ -88,6 +90,7 @@ public class PostDAO extends AbstractDAO<PostBean> {
                 post.setImmagine(result.getString("immagine"));
                 post.setSegnalazioni(result.getInt("segnalazioni"));
                 post.setLikes(result.getInt("likes")); // Include likes after segnalazioni
+                post.setDataCreazione(result.getDate("dataCreazione"));
                 post.setUtenteEmail(result.getString("utenteEmail"));
                 post.setCommunityId(result.getInt("communityId"));
                 posts.add(post);
@@ -121,6 +124,7 @@ public class PostDAO extends AbstractDAO<PostBean> {
                 post.setImmagine(result.getString("immagine"));
                 post.setSegnalazioni(result.getInt("segnalazioni"));
                 post.setLikes(result.getInt("likes")); // Add likes after segnalazioni
+                post.setDataCreazione(result.getDate("dataCreazione"));
                 post.setUtenteEmail(result.getString("utenteEmail"));
                 post.setCommunityId(result.getInt("communityId"));
                 posts.add(post);
@@ -157,6 +161,7 @@ public class PostDAO extends AbstractDAO<PostBean> {
                 post.setImmagine(result.getString("immagine"));
                 post.setSegnalazioni(result.getInt("segnalazioni"));
                 post.setLikes(result.getInt("likes")); // Include likes after segnalazioni
+                post.setDataCreazione(result.getDate("dataCreazione"));
                 post.setUtenteEmail(result.getString("utenteEmail"));
                 post.setCommunityId(result.getInt("communityId"));
                 posts.add(post);
@@ -191,7 +196,7 @@ public class PostDAO extends AbstractDAO<PostBean> {
         PreparedStatement statement = null;
         int result = 0;
 
-        String query = "UPDATE " + TABLE_NAME + " SET titolo = ?, corpo = ?, immagine = ?, segnalazioni = ?, likes = ?, utenteEmail = ?, communityId = ? WHERE id = ?";
+        String query = "UPDATE " + TABLE_NAME + " SET titolo = ?, corpo = ?, immagine = ?, segnalazioni = ?, likes = ?, dataCreazione = ?, utenteEmail = ?, communityId = ? WHERE id = ?";
 
         try {
             con = DriverManagerConnectionPool.getConnection();
@@ -203,9 +208,10 @@ public class PostDAO extends AbstractDAO<PostBean> {
             statement.setString(3, bean.getImmagine());
             statement.setInt(4, bean.getSegnalazioni());
             statement.setInt(5, bean.getLikes());
-            statement.setString(6, bean.getUtenteEmail());
-            statement.setInt(7, bean.getCommunityId());
-            statement.setInt(8, bean.getId()); // ID must be set last for the WHERE clause
+            statement.setDate(6, bean.getDataCreazione());
+            statement.setString(7, bean.getUtenteEmail());
+            statement.setInt(8, bean.getCommunityId());
+            statement.setInt(9, bean.getId());
 
             // Execute the update and capture the result
             result = statement.executeUpdate();
@@ -224,7 +230,6 @@ public class PostDAO extends AbstractDAO<PostBean> {
         // Return true if at least one row was updated, false otherwise
         return result != 0;
     }
-
 
     public synchronized void updateLikes(int postId, boolean increase) throws SQLException {
         Connection con = null;
@@ -249,6 +254,51 @@ public class PostDAO extends AbstractDAO<PostBean> {
             if (statement != null) statement.close();
             DriverManagerConnectionPool.releaseConnection(con);
         }
+    }
+    
+    public synchronized List<PostBean> doRetrieveByCommunityId(int communityId, String orderBy, boolean descending) throws SQLException {
+        Connection con = null;
+        PreparedStatement statement = null;
+        List<PostBean> posts = new ArrayList<>();
+
+        // Determina la colonna di ordinamento
+        String orderColumn;
+        if ("likes".equalsIgnoreCase(orderBy)) {
+            orderColumn = "likes";
+        } else {
+            orderColumn = "dataCreazione"; // Default all'ordinamento per data
+        }
+
+        // Determina l'ordine ASC o DESC
+        String orderDirection = descending ? "DESC" : "ASC";
+
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE communityId = ? ORDER BY " + orderColumn + " " + orderDirection;
+
+        try {
+            con = DriverManagerConnectionPool.getConnection();
+            statement = con.prepareStatement(query);
+            statement.setInt(1, communityId);
+
+            ResultSet result = statement.executeQuery();
+
+            while (result.next()) {
+                PostBean post = new PostBean();
+                post.setId(result.getInt("id"));
+                post.setTitolo(result.getString("titolo"));
+                post.setCorpo(result.getString("corpo"));
+                post.setImmagine(result.getString("immagine"));
+                post.setSegnalazioni(result.getInt("segnalazioni"));
+                post.setLikes(result.getInt("likes"));
+                post.setDataCreazione(result.getDate("dataCreazione"));
+                post.setUtenteEmail(result.getString("utenteEmail"));
+                post.setCommunityId(result.getInt("communityId"));
+                posts.add(post);
+            }
+        } finally {
+            if (statement != null) statement.close();
+            DriverManagerConnectionPool.releaseConnection(con);
+        }
+        return posts;
     }
 
 }
