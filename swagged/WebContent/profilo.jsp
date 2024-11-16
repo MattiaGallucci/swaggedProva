@@ -73,7 +73,13 @@
 <body>
 <!-- Cerchio per l'immagine del profilo -->
 <div class="profile-image-container">
-    <img src="<%=utente.getImmagine() %>" alt="Immagine Profilo" class="profile-image">
+    <img src="<%=request.getContextPath() + "/images/pfp/" + utente.getImmagine()%>" alt="Immagine Profilo" class="profile-image">
+    <form action="account" method="post" enctype="multipart/form-data">
+    	<input type="hidden" name="mode" value="modificaImmagine"/>
+    	<label for="immagine">URL Immagine:</label>
+		<input type="file" id="immagine" name="immagine" placeholder="Immagine" accept="image/*"/>
+		<button type="submit">Aggiorna Foto Profilo</button>    
+    </form>
 </div>
     <h1>Profilo di <%= utente.getUsername() %></h1>
     <p>Email: <%= utente.getEmail() %></p>

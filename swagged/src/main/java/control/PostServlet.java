@@ -250,7 +250,6 @@ public class PostServlet extends HttpServlet {
         		}
         		String relativeFileName = sanitizedFileName;
                 
-                
                 int communityId = Integer.parseInt(request.getParameter("communityId"));
                 String utenteEmail = (String) request.getSession().getAttribute("email");
 

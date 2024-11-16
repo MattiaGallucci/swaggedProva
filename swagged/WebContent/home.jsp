@@ -88,6 +88,7 @@
     </style>
 </head>
 <body>
+
     <h2>Benvenuto, <%= session.getAttribute("username") %>!</h2>
     <p>Email: <%= session.getAttribute("email") %></p>
 
