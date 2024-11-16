@@ -155,7 +155,7 @@
 	</form>
 	
 	<h3>Crea un nuovo post</h3>
-		<form action="posts" method="get" enctype="multipart/form-data">
+		<form action="posts" method="post" enctype="multipart/form-data">
     		<input type="hidden" name="mode" value="crea" />
 		    <label for="titolo">Titolo:</label>
 		    <input type="text" id="titolo" name="titolo" required maxlength="50" />
@@ -164,7 +164,7 @@
 		    <textarea id="corpo" name="corpo" required maxlength="512"></textarea>
 		    
 		    <label for="immagine">URL Immagine:</label>
-		    <input type="text" id="immagine" name="immagine" maxlength="512" />
+		    <input type="file" id="immagine" name="immagine" placeholder="Immagine" accept="image/*"/>
 		    
 		    <label for="communityId">Community ID:</label>
 		    <input type="number" id="communityId" name="communityId" required />

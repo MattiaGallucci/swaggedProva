@@ -25,54 +25,84 @@
 <html>
 <head>
     <title>Profilo di <%= utente.getUsername() %></title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .section {
-            margin-top: 20px;
-        }
-        .post-container {
-            border: 1px solid #ddd;
-            padding: 20px;
-            margin: 10px 0;
-            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        .post-title {
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .post-body {
-            margin-top: 10px;
-        }
-        .post-info {
-            font-size: 14px;
-            color: #555;
-        }
-    </style>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .section {
+        margin-top: 20px;
+    }
+
+    .post-container {
+        border: 1px solid #ddd;
+        padding: 20px;
+        margin: 10px 0;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .post-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .post-body {
+        margin-top: 10px;
+    }
+
+    .post-info {
+        font-size: 14px;
+        color: #555;
+    }
+
+    /* Styling for post image */
+    .post-image {
+        margin-top: 15px; /* Space above the image */
+        text-align: center; /* Centers the image */
+    }
+
+    .post-image img {
+        max-width: 100%; /* Ensures the image does not overflow the container */
+        height: auto; /* Maintains aspect ratio */
+        border-radius: 8px; /* Optional: round the corners of the image */
+    }
+</style>
+
+
 </head>
 <body>
+<!-- Cerchio per l'immagine del profilo -->
+<div class="profile-image-container">
+    <img src="<%=utente.getImmagine() %>" alt="Immagine Profilo" class="profile-image">
+</div>
     <h1>Profilo di <%= utente.getUsername() %></h1>
     <p>Email: <%= utente.getEmail() %></p>
     <p>Stato: <%= utente.isBandito() ? "Bandito" : "Attivo" %></p>
 
     <div class="section">
-        <h2>Post Creati</h2>
-        <% if (postCreati != null && !postCreati.isEmpty()) { %>
-            <% for (PostBean post : postCreati) { %>
-                <div class="post-container">
-                    <div class="post-title"><%= post.getTitolo() %></div>
-                    <div class="post-body"><%= post.getCorpo() %></div>
-                    <div class="post-info">
-                        <p>Likes: <%= post.getLikes() %></p>
-                        <p>Segnalazioni: <%= post.getSegnalazioni() %></p>
-                    </div>
+    <h2>Post Creati</h2>
+    <% if (postCreati != null && !postCreati.isEmpty()) { %>
+        <% for (PostBean post : postCreati) { %>
+            <div class="post-container">
+                <div class="post-title"><%= post.getTitolo() %></div>
+                <div class="post-body"><%= post.getCorpo() %></div>
+                <div class="post-info">
+                    <p>Likes: <%= post.getLikes() %></p>
+                    <p>Segnalazioni: <%= post.getSegnalazioni() %></p>
                 </div>
-            <% } %>
-        <% } else { %>
-            <p>Nessun post creato.</p>
+                
+                <% if (post.getImmagine() != null && !post.getImmagine().isEmpty()) { %>
+                    <div class="post-image">
+                        <img src="<%=request.getContextPath() + "/images/post/" + post.getImmagine()%>" alt="Immagine del post" />
+                    </div>
+                <% } %>
+            </div>
         <% } %>
-    </div>
+    <% } else { %>
+        <p>Nessun post creato.</p>
+    <% } %>
+</div>
+
 
     <div class="section">
         <h2>Post Salvati</h2>
