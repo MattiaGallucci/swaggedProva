@@ -10,22 +10,25 @@ describe('lib/evnet', function () {
   let findElementInEventPath;
 
   before(function () {
-    spyAEL = sinon.spy(EventTarget.prototype, 'addEventListener');
-    spyREL = sinon.spy(EventTarget.prototype, 'removeEventListener');
+  spyAEL = sinon.spy(EventTarget.prototype, 'addEventListener');
+  spyREL = sinon.spy(EventTarget.prototype, 'removeEventListener');
 
-    const origWeakMap = global.WeakMap;
-    global.WeakMap = function (...args) {
-      return listenerRegistry = new origWeakMap(...args);
-    };
-    return import('../../../js/lib/event.js')
-      .then((module) => {
-        global.WeakMap = origWeakMap;
+  const origWeakMap = global.WeakMap;
+  global.WeakMap = function (...args) {
+    let listenerRegistry = new origWeakMap(...args);  // Declare 'listenerRegistry' explicitly
+    return listenerRegistry;
+  };
 
-        registerListeners = module.registerListeners;
-        unregisterListeners = module.unregisterListeners;
-        findElementInEventPath = module.findElementInEventPath;
-      });
-  });
+  return import('../../../js/lib/event.js')
+    .then((module) => {
+      global.WeakMap = origWeakMap;
+
+      registerListeners = module.registerListeners;
+      unregisterListeners = module.unregisterListeners;
+      findElementInEventPath = module.findElementInEventPath;
+    });
+});
+
 
   after(function () {
     spyAEL.restore();
