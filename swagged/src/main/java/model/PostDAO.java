@@ -14,7 +14,7 @@ public class PostDAO extends AbstractDAO<PostBean> {
         Connection con = null;
         PreparedStatement statement = null;
 
-        String query = "INSERT INTO " + TABLE_NAME + " (titolo, corpo, immagine, segnalazioni, likes, dataCreazione, utenteEmail, communityId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO " + TABLE_NAME + " (titolo, corpo, immagine, segnalazioni, likes, dataCreazione, numeroCommenti, utenteEmail, communityId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             con = DriverManagerConnectionPool.getConnection();
@@ -26,8 +26,9 @@ public class PostDAO extends AbstractDAO<PostBean> {
             statement.setInt(4, bean.getSegnalazioni());
             statement.setInt(5, bean.getLikes());
             statement.setDate(6, bean.getDataCreazione()); // Assume that dataCreazione is set in the bean
-            statement.setString(7, bean.getUtenteEmail());
-            statement.setInt(8, bean.getCommunityId());
+            statement.setInt(7, bean.getNumeroCommenti());
+            statement.setString(8, bean.getUtenteEmail());
+            statement.setInt(9, bean.getCommunityId());
 
             statement.executeUpdate();
             con.commit();
@@ -59,6 +60,7 @@ public class PostDAO extends AbstractDAO<PostBean> {
                 post.setSegnalazioni(result.getInt("segnalazioni"));
                 post.setLikes(result.getInt("likes")); // Retrieve likes after segnalazioni
                 post.setDataCreazione(result.getDate("dataCreazione"));
+                post.setNumeroCommenti(result.getInt("numeroCommenti"));
                 post.setUtenteEmail(result.getString("utenteEmail"));
                 post.setCommunityId(result.getInt("communityId"));
             }
@@ -91,6 +93,7 @@ public class PostDAO extends AbstractDAO<PostBean> {
                 post.setSegnalazioni(result.getInt("segnalazioni"));
                 post.setLikes(result.getInt("likes")); // Include likes after segnalazioni
                 post.setDataCreazione(result.getDate("dataCreazione"));
+                post.setNumeroCommenti(result.getInt("numeroCommenti"));
                 post.setUtenteEmail(result.getString("utenteEmail"));
                 post.setCommunityId(result.getInt("communityId"));
                 posts.add(post);
@@ -128,6 +131,7 @@ public class PostDAO extends AbstractDAO<PostBean> {
                 post.setSegnalazioni(result.getInt("segnalazioni"));
                 post.setLikes(result.getInt("likes"));
                 post.setDataCreazione(result.getDate("dataCreazione"));
+                post.setNumeroCommenti(result.getInt("numeroCommenti"));
                 post.setUtenteEmail(result.getString("utenteEmail"));
                 post.setCommunityId(result.getInt("communityId"));
                 posts.add(post);
@@ -164,6 +168,7 @@ public class PostDAO extends AbstractDAO<PostBean> {
                 post.setSegnalazioni(result.getInt("segnalazioni"));
                 post.setLikes(result.getInt("likes")); // Add likes after segnalazioni
                 post.setDataCreazione(result.getDate("dataCreazione"));
+                post.setNumeroCommenti(result.getInt("numeroCommenti"));
                 post.setUtenteEmail(result.getString("utenteEmail"));
                 post.setCommunityId(result.getInt("communityId"));
                 posts.add(post);
@@ -201,6 +206,7 @@ public class PostDAO extends AbstractDAO<PostBean> {
                 post.setSegnalazioni(result.getInt("segnalazioni"));
                 post.setLikes(result.getInt("likes")); // Include likes after segnalazioni
                 post.setDataCreazione(result.getDate("dataCreazione"));
+                post.setNumeroCommenti(result.getInt("numeroCommenti"));
                 post.setUtenteEmail(result.getString("utenteEmail"));
                 post.setCommunityId(result.getInt("communityId"));
                 posts.add(post);
@@ -235,7 +241,7 @@ public class PostDAO extends AbstractDAO<PostBean> {
         PreparedStatement statement = null;
         int result = 0;
 
-        String query = "UPDATE " + TABLE_NAME + " SET titolo = ?, corpo = ?, immagine = ?, segnalazioni = ?, likes = ?, dataCreazione = ?, utenteEmail = ?, communityId = ? WHERE id = ?";
+        String query = "UPDATE " + TABLE_NAME + " SET titolo = ?, corpo = ?, immagine = ?, segnalazioni = ?, likes = ?, dataCreazione = ?, numeroCommenti = ?, utenteEmail = ?, communityId = ? WHERE id = ?";
 
         try {
             con = DriverManagerConnectionPool.getConnection();
@@ -248,9 +254,10 @@ public class PostDAO extends AbstractDAO<PostBean> {
             statement.setInt(4, bean.getSegnalazioni());
             statement.setInt(5, bean.getLikes());
             statement.setDate(6, bean.getDataCreazione());
-            statement.setString(7, bean.getUtenteEmail());
-            statement.setInt(8, bean.getCommunityId());
-            statement.setInt(9, bean.getId());
+            statement.setInt(7, bean.getNumeroCommenti());
+            statement.setString(8, bean.getUtenteEmail());
+            statement.setInt(9, bean.getCommunityId());
+            statement.setInt(10, bean.getId());
 
             // Execute the update and capture the result
             result = statement.executeUpdate();
@@ -329,6 +336,7 @@ public class PostDAO extends AbstractDAO<PostBean> {
                 post.setSegnalazioni(result.getInt("segnalazioni"));
                 post.setLikes(result.getInt("likes"));
                 post.setDataCreazione(result.getDate("dataCreazione"));
+                post.setNumeroCommenti(result.getInt("numeroCommenti"));
                 post.setUtenteEmail(result.getString("utenteEmail"));
                 post.setCommunityId(result.getInt("communityId"));
                 posts.add(post);

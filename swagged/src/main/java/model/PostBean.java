@@ -12,6 +12,7 @@ public class PostBean implements Serializable {
     private int segnalazioni;
     private int likes;
     private Date dataCreazione;
+    private int numeroCommenti;
     private String utenteEmail;
     private int communityId;
 
@@ -23,6 +24,7 @@ public class PostBean implements Serializable {
         this.segnalazioni = 0;
         this.likes = 0;
         this.dataCreazione = new Date(-1);
+        this.numeroCommenti = 0;
         this.utenteEmail = "";
         this.communityId = -1;
     }
@@ -94,6 +96,22 @@ public class PostBean implements Serializable {
     public void setDataCreazione(Date dataCreazione) {
         this.dataCreazione = dataCreazione;
     }
+    
+	public int getNumeroCommenti() {
+		return numeroCommenti;
+	}
+
+	public void setNumeroCommenti(int numeroCommenti) {
+		this.numeroCommenti = numeroCommenti;
+	}
+	
+	public void aumentaNumeroCommenti() {
+		this.numeroCommenti++;
+	}
+	
+	public void diminuisciNumeroCommenti() {
+		this.numeroCommenti--;
+	}
 
 	public String getUtenteEmail() {
         return utenteEmail;

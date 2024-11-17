@@ -15,6 +15,8 @@ import model.ApprezzaCommentoBean;
 import model.ApprezzaCommentoDAO;
 import model.CommentoBean;
 import model.CommentoDAO;
+import model.PostBean;
+import model.PostDAO;
 import model.SegnalaCommentoBean;
 import model.SegnalaCommentoDAO;
 import model.SegnalaCommunityBean;
@@ -58,6 +60,11 @@ public class CommentoServlet extends HttpServlet {
                 newCommento.setPadre(0);
                 newCommento.setUtenteEmail(utenteEmail);
                 newCommento.setPostId(postId);
+                
+                PostDAO postDAO = new PostDAO();
+                PostBean postBean = postDAO.doRetrieveById(postId);
+                postBean.aumentaNumeroCommenti();
+                postDAO.doUpdate(postBean);
                 
                 commentoDAO.doSave(newCommento);
                 
@@ -113,6 +120,16 @@ public class CommentoServlet extends HttpServlet {
 				}
 				path="posts?mode=home"; //modificare in modo che si rimane nella pagina del post
 			} else if("elimina".equalsIgnoreCase(mode)) {
+				String postIdParam = request.getParameter("postId");
+				int postId = -1;
+                if (postIdParam != null) {
+                    postId = Integer.parseInt(postIdParam);
+                }
+                PostDAO postDAO = new PostDAO();
+                PostBean postBean = postDAO.doRetrieveById(postId);
+                postBean.diminuisciNumeroCommenti();
+                postDAO.doUpdate(postBean);
+                
 				int commentoId = Integer.parseInt(request.getParameter("commentoId"));
                 commentoDAO.doDelete(commentoId);
                 

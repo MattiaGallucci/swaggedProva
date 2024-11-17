@@ -125,6 +125,7 @@
     					<input type="hidden" name="mode" value="visualizza" />
     					<button type="submit">Visualizza Commenti</button>
 					</form>
+					<p>Numero di Commenti: <%= randomPost.getNumeroCommenti()%></p>
                     <% if (isAdmin || userEmail.equals(randomPost.getUtenteEmail())) { %>
                         <form action="posts" method="get" style="display:inline;">
                         	<input type="hidden" name="mode" value="elimina" />

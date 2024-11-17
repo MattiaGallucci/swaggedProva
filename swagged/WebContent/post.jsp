@@ -115,6 +115,7 @@
                         <form action="commenti" method="get" style="display:inline;">
                         	<input type="hidden" name="mode" value="elimina" />
                             <input type="hidden" name="commentoId" value="<%= commento.getId() %>" />
+                            <input type="hidden" name="postId" value="<%= post.getId() %>" />
                             <button type="submit" class="delete-button">Elimina</button>
                         </form>
                     <% } %>
