@@ -274,7 +274,7 @@ public class PostServlet extends HttpServlet {
                 postDAO.doSave(newPost);
 
                 // Redirigi alla home
-                path = "posts?mode=home";
+                path = "community?mode=visualizza&orderBy=dataCreazione&communityId=" + communityId;
             }
         } catch (SQLException e) {
             e.printStackTrace();
