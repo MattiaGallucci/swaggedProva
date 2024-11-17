@@ -123,7 +123,8 @@ public class CommentoDAO extends AbstractDAO<CommentoBean> {
         PreparedStatement statement = null;
         List<CommentoBean> comments = new ArrayList<>();
 
-        String query = "SELECT * FROM " + TABLE_NAME + " WHERE postId = ?";
+        // Query con ordinamento per numero di like in ordine decrescente
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE postId = ? ORDER BY likes DESC";
 
         try {
             con = DriverManagerConnectionPool.getConnection();
@@ -150,6 +151,7 @@ public class CommentoDAO extends AbstractDAO<CommentoBean> {
         }
         return comments;
     }
+
 
     // New method to retrieve comments by a specific user's email
     public synchronized List<CommentoBean> doRetrieveByUtenteEmail(String utenteEmail) throws SQLException {
