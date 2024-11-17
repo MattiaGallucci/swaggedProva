@@ -217,6 +217,12 @@
 	                    <input type="hidden" name="communityId" value="<%= community.getId() %>" />
 	                    <button type="submit">Iscriviti</button>
 	                </form>
+	                <form action="community" method="get">
+	                	<input type="hidden" name="mode" value="visualizza"/>
+	                	<input type="hidden" name="communityId" value="<%= community.getId() %>"/>
+	                	<input type="hidden" name="orderBy" value="dataCreazione"/>
+    					<button type="submit" class="navigate-button">Vai alla pagina delle community</button>
+					</form>
 	                <% if (isAdmin || userEmail.equals(community.getUtenteEmail())) { %>
 	                    <form action="community" method="get" style="display:inline;">
 	                        <input type="hidden" name="mode" value="elimina" />

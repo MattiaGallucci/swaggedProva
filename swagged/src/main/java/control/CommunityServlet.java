@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import model.CommunityBean;
 import model.CommunityDAO;
+import model.PostBean;
+import model.PostDAO;
 import model.SegnalaCommentoDAO;
 import model.SegnalaCommunityBean;
 import model.SegnalaCommunityDAO;
@@ -101,6 +103,32 @@ public class CommunityServlet extends HttpServlet {
         		communityDAO.doDelete(communityId);
         		
         		path="posts?mode=home";
+        	} else if("visualizza".equalsIgnoreCase(mode)){
+        		int communityId = Integer.parseInt(request.getParameter("communityId"));
+        		PostDAO postDAO = new PostDAO();
+        		String orderBy = request.getParameter("orderBy");
+        		List<PostBean> post = postDAO.doRetrieveByCommunityId(communityId, orderBy, false);
+        		request.setAttribute("posts", post);
+        		
+        		CommunityBean communityBean = new CommunityBean();
+        		communityBean = communityDAO.doRetrieveById(communityId);
+        		request.setAttribute("community", communityBean);
+        		path = "community.jsp"; // Pagina della home
+        	} else if("modifica".equalsIgnoreCase(mode)) {
+        		int communityId = Integer.parseInt(request.getParameter("communityId"));
+        		String descrizione = request.getParameter("descrizione");
+        		CommunityBean communityBean = new CommunityBean();
+        		
+        		try {
+        			communityBean = communityDAO.doRetrieveById(communityId);
+        			communityBean.setDescrizione(descrizione);
+        			communityDAO.doUpdate(communityBean);
+        			path="community?mode=visualizza";
+        		} catch (SQLException e) {
+                    e.printStackTrace();
+                    request.setAttribute("errorMessage", "Errore nel recupero dei dati.");
+                    path = "error.jsp"; // Pagina di errore
+                }
         	}
         } catch (SQLException e) {
             e.printStackTrace();

@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -220,35 +222,39 @@ public class PostServlet extends HttpServlet {
                 String corpo = request.getParameter("corpo");
                 
                 Part filePart = request.getPart("immagine");
-                if (filePart == null || !isImageFile(filePart)) {
-        			request.setAttribute("errorMessage", "Per favore carica un file immagine valido (jpg, jpeg, png, gif).");
-        			request.getRequestDispatcher("/home.jsp").forward(request, response);
-        			return;
-        		}
-                String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-        		String applicationPath = getServletContext().getRealPath("");
-        		String uploadFilePath = applicationPath + File.separator + UPLOAD_DIR;
-        		File uploadDir = new File(uploadFilePath);
-        		if (!uploadDir.exists()) {
-        			uploadDir.mkdirs();
-        		}
-        		String sanitizedFileName = fileName.replaceAll("\\s+", "_");
-        		String filePath = uploadFilePath + File.separator + sanitizedFileName;
-        		File file = new File(filePath);
-        		while (file.exists()) {
-        			String uniqueID = UUID.randomUUID().toString();
-        			sanitizedFileName = uniqueID + "_" + sanitizedFileName;
-        			filePath = uploadFilePath + File.separator + sanitizedFileName;
-        			file = new File(filePath);
-        		}
-        		try {
-        			Files.copy(filePart.getInputStream(), Paths.get(filePath));
-        		} catch (IOException e) {
-        			request.setAttribute("errorMessage", "Errore durante il caricamento dell'immagine.");
-        			request.getRequestDispatcher("/home.jsp").forward(request, response);
-        			return;
-        		}
-        		String relativeFileName = sanitizedFileName;
+                String relativeFileName = null;
+                
+                if (filePart != null && filePart.getSubmittedFileName() != null && !filePart.getSubmittedFileName().isEmpty()) {
+                	if (filePart == null || !isImageFile(filePart)) {
+            			request.setAttribute("errorMessage", "Per favore carica un file immagine valido (jpg, jpeg, png, gif).");
+            			request.getRequestDispatcher("/home.jsp").forward(request, response);
+            			return;
+            		}
+	                String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+	        		String applicationPath = getServletContext().getRealPath("");
+	        		String uploadFilePath = applicationPath + File.separator + UPLOAD_DIR;
+	        		File uploadDir = new File(uploadFilePath);
+	        		if (!uploadDir.exists()) {
+	        			uploadDir.mkdirs();
+	        		}
+	        		String sanitizedFileName = fileName.replaceAll("\\s+", "_");
+	        		String filePath = uploadFilePath + File.separator + sanitizedFileName;
+	        		File file = new File(filePath);
+	        		while (file.exists()) {
+	        			String uniqueID = UUID.randomUUID().toString();
+	        			sanitizedFileName = uniqueID + "_" + sanitizedFileName;
+	        			filePath = uploadFilePath + File.separator + sanitizedFileName;
+	        			file = new File(filePath);
+	        		}
+	        		try {
+	        			Files.copy(filePart.getInputStream(), Paths.get(filePath));
+	        		} catch (IOException e) {
+	        			request.setAttribute("errorMessage", "Errore durante il caricamento dell'immagine.");
+	        			request.getRequestDispatcher("/home.jsp").forward(request, response);
+	        			return;
+	        		}
+	        		relativeFileName = sanitizedFileName;
+                }
                 
                 int communityId = Integer.parseInt(request.getParameter("communityId"));
                 String utenteEmail = (String) request.getSession().getAttribute("email");
@@ -260,6 +266,7 @@ public class PostServlet extends HttpServlet {
                 newPost.setImmagine(relativeFileName);
                 newPost.setSegnalazioni(0);
                 newPost.setLikes(0);
+                newPost.setDataCreazione(new Date(System.currentTimeMillis()));
                 newPost.setUtenteEmail(utenteEmail);
                 newPost.setCommunityId(communityId);
 
