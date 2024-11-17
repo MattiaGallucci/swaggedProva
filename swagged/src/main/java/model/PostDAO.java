@@ -101,6 +101,45 @@ public class PostDAO extends AbstractDAO<PostBean> {
         }
         return posts;
     }
+    
+    public synchronized List<PostBean> doRetrieveAll(String orderBy, boolean descending) throws SQLException {
+        Connection con = null;
+        PreparedStatement statement = null;
+        List<PostBean> posts = new ArrayList<>();
+
+        // Costruisci la query dinamica per l'ordinamento
+        String query = "SELECT * FROM " + TABLE_NAME;
+        if (orderBy != null && !orderBy.trim().isEmpty()) {
+            query += " ORDER BY " + orderBy + (descending ? " DESC" : " ASC");
+        }
+
+        try {
+            con = DriverManagerConnectionPool.getConnection();
+            statement = con.prepareStatement(query);
+
+            ResultSet result = statement.executeQuery();
+
+            while (result.next()) {
+                PostBean post = new PostBean();
+                post.setId(result.getInt("id"));
+                post.setTitolo(result.getString("titolo"));
+                post.setCorpo(result.getString("corpo"));
+                post.setImmagine(result.getString("immagine"));
+                post.setSegnalazioni(result.getInt("segnalazioni"));
+                post.setLikes(result.getInt("likes"));
+                post.setDataCreazione(result.getDate("dataCreazione"));
+                post.setUtenteEmail(result.getString("utenteEmail"));
+                post.setCommunityId(result.getInt("communityId"));
+                posts.add(post);
+            }
+        } finally {
+            if (statement != null) statement.close();
+            DriverManagerConnectionPool.releaseConnection(con);
+        }
+
+        return posts;
+    }
+
 
     public synchronized List<PostBean> doRetrieveByEmail(String key) throws SQLException {
         Connection con = null;
